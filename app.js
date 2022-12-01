@@ -88,7 +88,7 @@ db.initialize(database.url_atlas).then(() => {
             res.render('movie_submit_form', {title: 'Add Movie', method: 'post', action: '/api/Movies', errors: errors['errors'], body: req.body})
         } else {
             db.addNewMovie(req.body).then(createdMovie => {
-                res.render('movie_submit_form', {title: 'Added Movie', method: 'post', action: `/api/Movies/${createdMovie['_id']}?_method=PUT`, body: createdMovie})
+                res.render('movie_submit_form', {title: 'Added Movie', method: 'post', action: `/api/Movies/${createdMovie['_id']}?_method=PUT`, body: createdMovie, _id: createdMovie['_id']})
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
@@ -140,7 +140,7 @@ db.initialize(database.url_atlas).then(() => {
         } else {
             db.getMovieById(req.params['_id']).then(result => {
                 if (result !== null) {
-                    res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${result['_id']}?_method=PUT`, body: result})
+                    res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${result['_id']}?_method=PUT`, body: result, _id: result['_id']})
                 } else {
                     res.render('error', {title: 'Error', message: `Unable to find the movie with id ${req.params['_id']}`})
                 }
@@ -182,11 +182,11 @@ db.initialize(database.url_atlas).then(() => {
            if (isEmpty_id) {
                res.json(errors)
            } else {
-               res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${req.params['_id']}?_method=PUT`, body: req.body, errors: errors['errors']})
+               res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${req.params['_id']}?_method=PUT`, body: req.body, errors: errors['errors'], _id: req.params['_id']})
            }
         } else {
             db.updateMovieById(req.body, req.params['_id']).then(updatedMovie => {
-                res.render('movie_submit_form', {title: 'Updated Movie', method: 'post', action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`, body: updatedMovie})
+                res.render('movie_submit_form', {title: 'Updated Movie', method: 'post', action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`, body: updatedMovie, _id: updatedMovie['_id']})
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })

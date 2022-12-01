@@ -3,8 +3,8 @@
     <form method="{{method}}" action="{{action}}">
         {{>form}}
     </form>
-    {{#if this.body._id}}
-        <form method="post" action="/api/Movies/{{body._id}}?_method=DELETE">
+    {{#if this._id}}
+        <form method="post" action="/api/Movies/{{_id}}?_method=DELETE">
             <input class="btn btn-primary" type="submit" value="Delete">
         </form>
     {{/if}}
