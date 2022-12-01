@@ -1,0 +1,91 @@
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="cast">Cast</label>
+    <input class="form-control" type="text" name="cast" id="cast" placeholder="Separate actors by commas" {{#if this.body.cast}}value="{{body.cast}}"{{/if}}><br>
+    <div id="cast-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="countries">Countries</label>
+    <input class="form-control" type="text" name="countries" id="countries" placeholder="Separate countries by commas" {{#if this.body.countries}}value="{{body.countries}}"{{/if}}><br>
+    <div id="countries-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="directors">Directors</label>
+    <input class="form-control" type="text" name="directors" id="directors" placeholder="Separate directors by commas" {{#if this.body.directors}}value="{{body.directors}}"{{/if}}><br>
+    <div id="directors-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="fullplot">Full plot</label>
+    <input class="form-control" type="text" name="fullplot" id="fullplot" placeholder="Full plot of the movie" {{#if this.body.fullplot}}value="{{body.fullplot}}"{{/if}}><br>
+    <div id="fullplot-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="genres">Genres</label>
+    <input class="form-control" type="text" name="genres" id="genres" placeholder="Separate genres by commas" {{#if this.body.genres}}value="{{body.genres}}"{{/if}}><br>
+    <div id="genres-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="languages">Languages</label>
+    <input class="form-control" type="text" name="languages" id="languages" placeholder="Separate languages by commas" {{#if this.body.languages}}value="{{body.languages}}"{{/if}}><br>
+    <div id="languages-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="lastupdated">Last updated</label>
+    <input class="form-control" type="datetime-local" name="lastupdated" id="lastupdated" {{#if this.body.lastupdated}}value="{{body.lastupdated}}"{{/if}}><br>
+    <div id="lastupdated-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="metacritic">Metacritic</label>
+    <input class="form-control" type="number" name="metacritic" id="metacritic" placeholder="Metacritic of the movie" {{#if this.body.metacritic}}value="{{body.metacritic}}"{{/if}}><br>
+    <div id="metacritic-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="num_mflix_comments">Number of Mflix comments</label>
+    <input class="form-control" type="number" name="num_mflix_comments" id="num_mflix_comments" placeholder="The movie's number of Mflix comments" {{#if this.body.num_mflix_comments}}value="{{body.num_mflix_comments}}"{{/if}}><br>
+    <div id="num_mflix_comments-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="plot">Plot</label>
+    <input class="form-control" type="text" name="plot" id="plot" placeholder="Plot of the movie" {{#if this.body.plot}}value="{{body.plot}}"{{/if}}><br>
+    <div id="plot-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="poster">Poster</label>
+    <input class="form-control" type="url" name="poster" id="poster" placeholder="poster of the movie" {{#if this.body.poster}}value="{{body.poster}}"{{/if}}><br>
+    <div id="poster-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="rated">Rated</label>
+    <input class="form-control" type="text" name="rated" id="rated" placeholder="Rated of the movie" {{#if this.body.rated}}value="{{body.rated}}"{{/if}}><br>
+    <div id="rated-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="released">Released</label>
+    <input class="form-control" type="datetime-local" name="released" id="released" {{#if this.body.released}}value="{{body.released}}"{{/if}}><br>
+    <div id="released-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="runtime">Runtime</label>
+    <input class="form-control" type="number" name="runtime" id="runtime" placeholder="Runtime of the movie" {{#if this.body.runtime}}value="{{body.runtime}}"{{/if}}><br>
+    <div id="runtime-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="title">Title</label>
+    <input class="form-control" type="text" name="title" id="title" placeholder="Title of the movie" {{#if this.body.title}}value="{{body.title}}"{{/if}} required><br>
+    <div id="title-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="type">Type</label>
+    <input class="form-control" type="text" name="type" id="type" placeholder="Type of the movie" {{#if this.body.type}}value="{{body.type}}"{{/if}} required><br>
+    <div id="type-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="writers">Writers</label>
+    <input class="form-control" type="text" name="writers" id="writers" placeholder="Separate writers by commas" {{#if this.body.writers}}value="{{body.writers}}"{{/if}}><br>
+    <div id="writers-error" class="invalid-feedback"></div><br>
+</div>
+<div class="input-group mb-3">
+    <label class="input-group-prepend input-group-text" for="year">Year</label>
+    <input class="form-control" type="number" name="year" id="year" placeholder="Year of the movie" {{#if this.body.year}}value="{{body.year}}"{{/if}} required><br>
+    <div id="year-error" class="invalid-feedback"></div><br>
+</div>
+<input class="btn btn-primary" type="submit" value="Submit">

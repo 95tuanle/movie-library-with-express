@@ -1,0 +1,22 @@
+{{>title}}
+<div>
+    <form method="get" action="/api/Movies">
+        <div class="input-group mb-3">
+            <label class="input-group-prepend input-group-text" for="page">Page</label>
+            <input class="form-control" type="number" name="page" id="page" placeholder="Number of pages" {{#if this.query.page}}value="{{query.page}}"{{/if}} required><br>
+            <div id="page-error" class="invalid-feedback"></div><br>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-prepend input-group-text" for="perPage">Per page</label>
+            <input class="form-control" type="number" name="perPage" id="perPage" placeholder="Number of movies per page" {{#if this.query.perPage}}value="{{query.perPage}}"{{/if}} required><br>
+            <div id="perPage-error" class="invalid-feedback"></div><br>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-prepend input-group-text" for="title">Title</label>
+            <input class="form-control" type="text" name="title" id="title" placeholder="Title of the movies" {{#if this.query.title}}value="{{query.title}}"{{/if}}><br>
+            <div id="title-error" class="invalid-feedback"></div><br>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Get">
+    </form>
+</div>
+{{>form_error_handler}}

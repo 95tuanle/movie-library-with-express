@@ -1,0 +1,31 @@
+table, tr, th, td {
+    border: solid black;
+    collapse: true;
+    border-collapse: collapse;
+    table-layout:fixed;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}
+
+header {
+    background-color: grey;
+    color: white;
+    text-align: center;
+    padding: 3px;
+}
+
+footer {
+    background-color: grey;
+    color: white;
+    text-align: center;
+    padding: 3px;
+}
+
+.link {
+    color: white;
+}
+
+.error {
+    color: red;
+}

@@ -1,0 +1,12 @@
+{{>title}}
+<div>
+    <form method="{{method}}" action="{{action}}">
+        {{>form}}
+    </form>
+    {{#if this.body._id}}
+        <form method="post" action="/api/Movies/{{body._id}}?_method=DELETE">
+            <input class="btn btn-primary" type="submit" value="Delete">
+        </form>
+    {{/if}}
+</div>
+{{>form_error_handler}}

@@ -1,0 +1,47 @@
+{{>title}}
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <th>Cast</th>
+        <th>Countries</th>
+        <th>Directors</th>
+<!--        <th>fullplot</th>-->
+        <th>Genres</th>
+        <th>Languages</th>
+<!--        <th>lastupdated</th>-->
+<!--        <th>metacritic</th>-->
+<!--        <th>num_mflix_comments</th>-->
+<!--        <th>plot</th>-->
+<!--        <th>poster</th>-->
+        <th>Rated</th>
+<!--        <th>released</th>-->
+        <th>Runtime</th>
+        <th>Title</th>
+<!--        <th>type</th>-->
+<!--        <th>writers</th>-->
+        <th>Year</th>
+    </tr>
+    {{#each movies}}
+        <tr>
+            <td><a href="/Movies/update/{{_id}}">{{_id}}</a></td>
+            <td>{{cast}}</td>
+            <td>{{countries}}</td>
+            <td>{{directors}}</td>
+<!--            <td>{{fullplot}}</td>-->
+            <td>{{genres}}</td>
+            <td>{{languages}}</td>
+<!--            <td>{{lastupdated}}</td>-->
+<!--            <td>{{metacritic}}</td>-->
+<!--            <td>{{num_mflix_comments}}</td>-->
+<!--            <td>{{plot}}</td>-->
+<!--            <td>{{poster}}</td>-->
+            <td>{{rated}}</td>
+<!--            <td>{{released}}</td>-->
+            <td>{{runtime}}</td>
+            <td>{{title}}</td>
+<!--            <td>{{type}}</td>-->
+<!--            <td>{{writers}}</td>-->
+            <td>{{year}}</td>
+        </tr>
+    {{/each}}
+</table>
