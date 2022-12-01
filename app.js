@@ -88,9 +88,9 @@ db.initialize(database.url_atlas).then(() => {
             res.render('movie_submit_form', {title: 'Add Movie', method: 'post', action: '/api/Movies', errors: errors['errors'], body: req.body})
         } else {
             db.addNewMovie(req.body).then(createdMovie => {
-                res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${createdMovie['_id']}?_method=PUT`, body: createdMovie})
+                res.render('movie_submit_form', {title: 'Added Movie', method: 'post', action: `/api/Movies/${createdMovie['_id']}?_method=PUT`, body: createdMovie})
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
@@ -111,7 +111,7 @@ db.initialize(database.url_atlas).then(() => {
             db.getAllMovies(req.query['page'], req.query['perPage'], req.query['title']).then(result => {
                 res.render('movies', {title: 'Movies', movies: result})
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
@@ -126,7 +126,7 @@ db.initialize(database.url_atlas).then(() => {
             db.getMovieById(req.params['_id']).then(result => {
                 res.json(result)
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
@@ -142,10 +142,10 @@ db.initialize(database.url_atlas).then(() => {
                 if (result !== null) {
                     res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${result['_id']}?_method=PUT`, body: result})
                 } else {
-                    res.json(result)
+                    res.render('error', {title: 'Error', message: `Unable to find the movie with id ${req.params['_id']}`})
                 }
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
@@ -186,9 +186,9 @@ db.initialize(database.url_atlas).then(() => {
            }
         } else {
             db.updateMovieById(req.body, req.params['_id']).then(updatedMovie => {
-                res.json(updatedMovie)
+                res.render('movie_submit_form', {title: 'Updated Movie', method: 'post', action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`, body: updatedMovie})
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
@@ -201,9 +201,9 @@ db.initialize(database.url_atlas).then(() => {
             res.json(errors)
         } else {
             db.deleteMovieById(req.params['_id']).then(result => {
-                res.json(result)
+                res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
@@ -216,9 +216,9 @@ db.initialize(database.url_atlas).then(() => {
             res.json(errors)
         } else {
             db.deleteMovieById(req.body['_id']).then(result => {
-                res.json(result)
+                res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
             }, error => {
-                res.json(error)
+                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
         }
     })
