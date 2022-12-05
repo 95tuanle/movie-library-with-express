@@ -2,13 +2,49 @@
 const mongoose = require('mongoose')
 
 let Movie
+let User
 
 exports.initialize = connectionString => {
     return new Promise((resolve, reject) => {
         mongoose.connect(connectionString).then(() => {
             Movie = require('./models/movie')
+            User = require('./models/user')
             resolve()
         }, error => {
+            reject(error)
+        })
+    })
+}
+
+exports.addNewUser = data => {
+    return new Promise((resolve, reject) => {
+        let user = new User({
+            username : data.username ,
+            password : data.password ,
+        })
+
+        user.save().then((createdUser) => {
+            resolve(createdUser)
+        }, (error) => {
+            reject(error)
+        })
+        // User.findOne({'username': data.username}).exec().then((result) => {
+        //     if (result !== null) {
+        //         reject('Unable to create a new user with that username')
+        //     } else {
+        //
+        //     }
+        // }, (error) => {
+        //     reject(error)
+        // })
+    })
+}
+
+exports.findUser = username => {
+    return new Promise((resolve, reject) => {
+        User.findOne({'username': username}).exec().then((result) => {
+            resolve(result)
+        }, (error) => {
             reject(error)
         })
     })
@@ -37,7 +73,7 @@ exports.addNewMovie = data => {
             year :  data.year ,
         })
 
-        movie.save().then(createdMovie => {
+        movie.save().then((createdMovie) => {
             resolve(createdMovie)
         }, error => {
             reject(error)
@@ -94,7 +130,7 @@ exports.updateMovieById = (data, _id) => {
             type :  data.type ,
             writers : data.writers ,
             year :  data.year ,
-        }, {returnDocument: 'after'}).exec().then(updatedMovie => {
+        }, {returnDocument: 'after'}).exec().then((updatedMovie) => {
             resolve(updatedMovie)
         }, error => {
             reject(error)

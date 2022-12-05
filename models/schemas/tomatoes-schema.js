@@ -1,8 +1,8 @@
 // load mongoose since we need it to define a model
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const CriticSchema = require("./critic-schema");
-const ViewerSchema = require("./viewer-schema");
+const CriticSchema = require("./critic-schema")
+const ViewerSchema = require("./viewer-schema")
 TomatoesSchema = new Schema({
     boxOffice: { type: String } ,
     consensus: { type: String } ,

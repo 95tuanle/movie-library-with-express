@@ -1,9 +1,9 @@
 // load mongoose since we need it to define a model
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-const AwardsSchema = require("./awards-schema");
-const ImdbSchema = require("./imdb-schema");
-const TomatoesSchema = require("./tomatoes-schema");
+const AwardsSchema = require("./awards-schema")
+const ImdbSchema = require("./imdb-schema")
+const TomatoesSchema = require("./tomatoes-schema")
 MovieSchema = new Schema({
     cast : [{ type: String }] ,
     countries : [{ type: String }] ,

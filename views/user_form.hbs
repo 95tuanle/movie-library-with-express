@@ -1,0 +1,29 @@
+{{>title}}
+<div>
+    <form method="{{method}}" action="{{action}}">
+        <div class="input-group mb-3">
+            <label class="input-group-prepend input-group-text" for="username">Username</label>
+            <input class="form-control" type="text" name="username" id="username" placeholder="Username" {{#if this.body.username}}value="{{body.username}}"{{/if}} required><br>
+            <div id="username-error" class="invalid-feedback"></div><br>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-prepend input-group-text" for="password">Password</label>
+            <input class="form-control" type="password" name="password" id="password" placeholder="Password" {{#if this.body.password}}value="{{body.password}}"{{/if}} required><br>
+            <div id="password-error" class="invalid-feedback"></div><br>
+        </div>
+        <input class="btn btn-primary" type="submit" value="Send">
+    </form>
+</div>
+{{#if this.isLogin}}
+    <form method="get" action="/register">
+        <label>Go to register</label>
+        <input class="btn btn-primary" type="submit" value="Register">
+    </form>
+{{/if}}
+{{#if this.isRegister}}
+    <form method="get" action="/login">
+        <label>Go to login</label>
+        <input class="btn btn-primary" type="submit" value="Login">
+    </form>
+{{/if}}
+{{>form_error_handler}}
