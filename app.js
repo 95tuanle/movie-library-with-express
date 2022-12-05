@@ -7,9 +7,13 @@ const expressHandlebars = require('express-handlebars')
 // import cors
 const cors = require('cors')
 // import bcryptjs
-const bcrypt = require('bcryptjs')
+const bcryptjs = require('bcryptjs')
+// import jsonwebtoken
+const jsonwebtoken = require('jsonwebtoken');
 // pull information from HTML POST (express4)
 const bodyParser = require('body-parser')
+// import cookie-parser
+const cookieParser = require('cookie-parser')
 // set constant for port
 const port = process.env.PORT || 8000
 // import express-validator
@@ -35,6 +39,8 @@ const HBS = expressHandlebars.create({
 })
 // initialize express app
 const app = express()
+// let the app use cookie-parser
+app.use(cookieParser())
 // let the app use cors
 app.use(cors())
 // set directory for static files
@@ -53,8 +59,31 @@ app.engine('.hbs', HBS.engine)
 app.set('view engine', 'hbs')
 
 db.initialize(database.url_atlas).then(() => {
-    app.route('/api/Movies').all((req, res, next) => {
-        next()
+    app.route(['/api/Movies*', '/Movies*']).all((req, res, next) => {
+        const token = req.cookies.token
+        if (token === undefined) {
+            res.redirect('/login')
+        } else {
+            jsonwebtoken.verify(token, process.env.TOKEN_SECRET, {},(error, decoded) => {
+                if (error) {
+                    res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                } else {
+                    db.findUser(decoded.username).then(user => {
+                        if (user == null) {
+                            res.redirect('/login')
+                        } else {
+                            if (user.token === token) {
+                                next()
+                            } else {
+                                res.redirect('/login')
+                            }
+                        }
+                    }, error => {
+                        res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                    })
+                }
+            })
+        }
     })
 
     app.get('/', (req, res) => {
@@ -67,7 +96,7 @@ db.initialize(database.url_atlas).then(() => {
 
     const encryptPassword = password => {
         return new Promise((resolve, reject) => {
-            bcrypt.hash(password, 3).then(encryptedPassword => {
+            bcryptjs.hash(password, 3).then(encryptedPassword => {
                 resolve(encryptedPassword)
             }, error => {
                 reject(error)
@@ -76,8 +105,8 @@ db.initialize(database.url_atlas).then(() => {
     }
 
     app.post('/register',
-        body('username').trim().escape().notEmpty().withMessage('Username must not be empty').bail().custom(username => {
-            return db.findUser(username).then((user) => {
+        body('username').trim().escape().notEmpty().withMessage('Username must not be empty').bail().toLowerCase().custom(username => {
+            return db.findUser(username).then(user => {
                 if (user !== null) {
                     return Promise.reject('Unable to create a new user with that username')
                 }
@@ -92,7 +121,7 @@ db.initialize(database.url_atlas).then(() => {
             res.render('user_form', {title: 'Register', method: 'post', action: '/register', errors: errors['errors'], body: req.body, isRegister: true})
         } else {
             db.addNewUser(req.body).then(() => {
-                res.render('user_form', {title: 'Login', method: 'post', action: '/login', isLogin: true})
+                res.redirect('/login')
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
             })
@@ -104,7 +133,7 @@ db.initialize(database.url_atlas).then(() => {
     })
 
     app.post('/login',
-        body('username').trim().escape().notEmpty().withMessage('Username must not be empty'),
+        body('username').trim().escape().notEmpty().withMessage('Username must not be empty').bail().toLowerCase(),
         body('password').trim().escape().notEmpty().withMessage('Password must not be empty'),
         (req, res) => {
         const errors = validationResult(req)
@@ -113,27 +142,43 @@ db.initialize(database.url_atlas).then(() => {
         } else {
             db.findUser(req.body['username']).then(user => {
                 if (user == null) {
-                    res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [
-                            {
-                                location: 'body',
-                                msg: 'Unable to login with that username',
-                                param: 'username',
-                                value: req.body['username']
-                            }
-                        ], isLogin: true})
+                    res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
+                        location: 'body',
+                        msg: 'Unable to login with that username',
+                        param: 'username',
+                        value: req.body['username']
+                    }], isLogin: true})
                 } else {
-                    bcrypt.compare(req.body['password'], user.password).then(result => {
+                    bcryptjs.compare(req.body['password'], user.password).then(result => {
                         if (result) {
-                            res.send('LOGGED IN')
+                            jsonwebtoken.sign({username: user.username}, process.env.TOKEN_SECRET, {},(error, token) => {
+                                if (error) {
+                                    res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                                } else {
+                                    db.updateUserToken(user.username, token).then(updatedUser => {
+                                        if (updatedUser == null) {
+                                            res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
+                                                    location: 'body',
+                                                    msg: 'Unable to login with that username',
+                                                    param: 'username',
+                                                    value: req.body['username']
+                                                }], isLogin: true})
+                                        } else {
+                                            res.cookie('token', updatedUser['token']);
+                                            res.redirect('/')
+                                        }
+                                    }, error => {
+                                        res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                                    })
+                                }
+                            })
                         } else {
-                            res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [
-                                    {
-                                        value: req.body['password'],
-                                        msg: 'Wrong password',
-                                        param: 'password',
-                                        location: 'body'
-                                    }
-                                ], isLogin: true})
+                            res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
+                                value: req.body['password'],
+                                msg: 'Wrong password',
+                                param: 'password',
+                                location: 'body'
+                            }], isLogin: true})
                         }
                     }, error => {
                         res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
@@ -229,10 +274,10 @@ db.initialize(database.url_atlas).then(() => {
             res.json(errors)
         } else {
             db.getMovieById(req.params['_id']).then(result => {
-                if (result !== null) {
-                    res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${result['_id']}?_method=PUT`, body: result, _id: result['_id']})
-                } else {
+                if (result === null) {
                     res.render('error', {title: 'Error', message: `Unable to find the movie with id ${req.params['_id']}`})
+                } else {
+                    res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${result['_id']}?_method=PUT`, body: result, _id: result['_id']})
                 }
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
@@ -276,10 +321,10 @@ db.initialize(database.url_atlas).then(() => {
            }
         } else {
             db.updateMovieById(req.body, req.params['_id']).then(updatedMovie => {
-                if (updatedMovie !== null) {
-                    res.render('movie_submit_form', {title: 'Updated Movie', method: 'post', action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`, body: updatedMovie, _id: updatedMovie['_id']})
-                } else {
+                if (updatedMovie === null) {
                     res.render('error', {title: 'Error', message: `Unable to update the movie with id ${req.params['_id']}`})
+                } else {
+                    res.render('movie_submit_form', {title: 'Updated Movie', method: 'post', action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`, body: updatedMovie, _id: updatedMovie['_id']})
                 }
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
@@ -295,10 +340,10 @@ db.initialize(database.url_atlas).then(() => {
             res.json(errors)
         } else {
             db.deleteMovieById(req.params['_id']).then(result => {
-                if (result !== null) {
-                    res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
-                } else {
+                if (result === null) {
                     res.render('error', {title: 'Error', message: `Unable to delete the movie with id ${req.params['_id']}`})
+                } else {
+                    res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
                 }
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
@@ -314,10 +359,10 @@ db.initialize(database.url_atlas).then(() => {
             res.json(errors)
         } else {
             db.deleteMovieById(req.body['_id']).then(result => {
-                if (result !== null) {
-                    res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
-                } else {
+                if (result === null) {
                     res.render('error', {title: 'Error', message: `Unable to delete the movie with id ${req.body['_id']}`})
+                } else {
+                    res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
                 }
             }, error => {
                 res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})

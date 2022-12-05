@@ -50,6 +50,16 @@ exports.findUser = username => {
     })
 }
 
+exports.updateUserToken = (username, token) => {
+    return new Promise((resolve, reject) => {
+        User.findOneAndUpdate({'username': username}, {'token': token}, {returnDocument: 'after'}).exec().then((updatedUser) => {
+            resolve(updatedUser)
+        }, error => {
+            reject(error)
+        })
+    })
+}
+
 exports.addNewMovie = data => {
     return new Promise((resolve, reject) => {
         let movie = new Movie({
@@ -90,7 +100,7 @@ exports.getAllMovies = (page, perPage, title) => {
                 reject(error)
             })
         } else {
-            Movie.find({"title": {$regex: title, $options: 'i'}}).limit(perPage).skip(perPage*(page-1)).sort({'_id': 1}).exec().then((result) => {
+            Movie.find({'title': {$regex: title, $options: 'i'}}).limit(perPage).skip(perPage*(page-1)).sort({'_id': 1}).exec().then((result) => {
                 resolve(result)
             }, error => {
                 reject(error)

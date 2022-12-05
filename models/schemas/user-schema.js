@@ -4,5 +4,6 @@ const Schema = mongoose.Schema
 UserSchema = new Schema({
     username : { type: String } ,
     password : { type: String } ,
+    token : { type: String } ,
 })
 module.exports = UserSchema
