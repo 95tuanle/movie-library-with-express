@@ -1,8 +1,8 @@
 {{#if this.errors}}
     {{#each errors}}
         <script>
-            document.getElementById("{{this.param}}").classList.add("is-invalid")
-            document.getElementById("{{this.param}}-error").innerText = "{{this.msg}}"
+            $('#{{this.param}}')[0].classList.add('is-invalid')
+            $('#{{this.param}}-error')[0].innerText = "{{this.msg}}"
         </script>
     {{/each}}
 {{/if}}
