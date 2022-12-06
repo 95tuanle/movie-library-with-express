@@ -12,8 +12,6 @@
 const express = require('express')
 // import path
 const path = require('path')
-// import express handlebars
-const expressHandlebars = require('express-handlebars')
 // import cors
 const cors = require('cors')
 // import bcryptjs
@@ -34,6 +32,8 @@ const methodOverride = require('method-override')
 const database = require('./config/database')
 // import db
 const db = require('./db')
+// import express handlebars
+const expressHandlebars = require('express-handlebars')
 // import Handlebars
 const handlebars = require("handlebars")
 // allow insecure prototype access
