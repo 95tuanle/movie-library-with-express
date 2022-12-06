@@ -30,27 +30,6 @@ db.initialize(database.url_atlas).then(async () => {
         tomatoes : TomatoesSchema
     }
     
-    input MovieInput {
-        cast : [ String ] ,
-        countries : [  String ] ,
-        directors : [  String ] ,
-        fullplot :   String  ,
-        genres : [  String ] ,
-        languages : [  String ] ,
-        lastupdated :   String  ,
-        metacritic :   Int  ,
-        num_mflix_comments :   Int  ,
-        plot :   String  ,
-        poster :   String  ,
-        rated :   String  ,
-        released :   String  ,
-        runtime :   Int  ,
-        title :   String  ,
-        type :   String  ,
-        writers : [  String ] ,
-        year :   Int  ,
-    }
-
     type Awards {
         wins : Int  ,
         nominations : Int ,
@@ -92,6 +71,27 @@ db.initialize(database.url_atlas).then(async () => {
         getAllMovies(page: Int, perPage: Int, title: String): [Movie]
     }
 
+    input MovieInput {
+        cast : [ String ] ,
+        countries : [  String ] ,
+        directors : [  String ] ,
+        fullplot :   String  ,
+        genres : [  String ] ,
+        languages : [  String ] ,
+        lastupdated :   String  ,
+        metacritic :   Int  ,
+        num_mflix_comments :   Int  ,
+        plot :   String  ,
+        poster :   String  ,
+        rated :   String  ,
+        released :   String  ,
+        runtime :   Int  ,
+        title :   String  ,
+        type :   String  ,
+        writers : [  String ] ,
+        year :   Int  ,
+    }
+    
     type Mutation {
         addNewMovie(data: MovieInput): Movie
     }
