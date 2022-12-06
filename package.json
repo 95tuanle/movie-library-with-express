@@ -1,6 +1,9 @@
 {
   "name": "nguyen-anh-tuan-le-n01414195-shubham-singh-n01469289",
   "version": "1.0.0",
+  "scripts": {
+    "start": "node app.js"
+  },
   "dependencies": {
     "@handlebars/allow-prototype-access": "^1.0.5",
     "bcryptjs": "^2.4.3",
