@@ -9,13 +9,20 @@
 </head>
 <body>
 <header>
-    <p>Web Programming & Framework 1 - ITE-5315-0NA - Project</p>
-    <a href="/Movies/add" class="link">Add Movie</a>    <a href="/Movies/get" class="link"> Get Movies</a>
+    <a href="/" class="link">Web Programming & Framework 1 - ITE-5315-0NA - Project</a><br>
+    <a href="/Movies/add" class="link">Add Movie</a>    <a href="/Movies/get" class="link"> Get Movies</a>  <a href="/login" id="logout-button" class="link"></a>
 </header>
 {{{body}}}
 <footer>
     <a href="mailto:tlna95@icloud.com" class="link">Nguyen Anh Tuan Le - N01414195</a><br>
     <a href="mailto:shubham.singh.lko80@gmail.com" class="link">Shubham Singh - N01469289</a>
 </footer>
+<script>
+    if (document.cookie.indexOf('token') !== -1) {
+        $('#logout-button')[0].innerText = "Logout";
+    } else {
+        $('#logout-button')[0].innerText = "Login";
+    }
+</script>
 </body>
 </html>

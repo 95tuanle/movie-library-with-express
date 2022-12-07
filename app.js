@@ -17,7 +17,7 @@ const cors = require('cors')
 // import bcryptjs
 const bcryptjs = require('bcryptjs')
 // import jsonwebtoken
-const jsonwebtoken = require('jsonwebtoken');
+const jsonwebtoken = require('jsonwebtoken')
 // pull information from HTML POST (express4)
 const bodyParser = require('body-parser')
 // import cookie-parser
@@ -74,22 +74,20 @@ db.initialize(database.url_atlas).then(() => {
             res.redirect('/login')
         } else {
             let token
-            let isAPIAccess = false
             if (req.cookies.token !== undefined) {
                 token = req.cookies.token
             } else {
                 token = req.headers.authorization.split(' ')[1]
-                isAPIAccess = true
             }
             jsonwebtoken.verify(token, process.env.TOKEN_SECRET, {},(error, decoded) => {
                 if (error) {
                     res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
                 } else {
-                    db.findUser(decoded.username).then(user => {
+                    db.findUser(decoded.user.username).then(user => {
                         if (user == null) {
                             res.redirect('/login')
                         } else {
-                            if (user.token === token || isAPIAccess) {
+                            if (user.password === decoded.user.password) {
                                 next()
                             } else {
                                 res.redirect('/login')
@@ -108,6 +106,7 @@ db.initialize(database.url_atlas).then(() => {
     })
 
     app.get('/register', (req, res) => {
+        res.clearCookie("token")
         res.render('user_form', {title: 'Register', method: 'post', action: '/register', isRegister: true})
     })
 
@@ -146,6 +145,7 @@ db.initialize(database.url_atlas).then(() => {
     })
 
     app.get('/login', (req, res) => {
+        res.clearCookie("token")
         res.render('user_form', {title: 'Login', method: 'post', action: '/login', isLogin: true})
     })
 
@@ -168,7 +168,8 @@ db.initialize(database.url_atlas).then(() => {
                 } else {
                     bcryptjs.compare(req.body['password'], user.password).then(result => {
                         if (result) {
-                            jsonwebtoken.sign({username: user.username}, process.env.TOKEN_SECRET, {},(error, token) => {
+                            user.token = ''
+                            jsonwebtoken.sign({user}, process.env.TOKEN_SECRET, {},(error, token) => {
                                 if (error) {
                                     res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
                                 } else {
@@ -181,7 +182,7 @@ db.initialize(database.url_atlas).then(() => {
                                                     value: req.body['username']
                                                 }], isLogin: true})
                                         } else {
-                                            res.cookie('token', updatedUser['token']);
+                                            res.cookie('token', updatedUser['token'])
                                             res.redirect('/')
                                         }
                                     }, error => {
