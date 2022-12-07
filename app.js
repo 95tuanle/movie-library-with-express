@@ -70,10 +70,17 @@ app.set('view engine', 'hbs')
 
 db.initialize(database.url_atlas).then(() => {
     app.route(['/api/Movies*', '/Movies*']).all((req, res, next) => {
-        const token = req.cookies.token
-        if (token === undefined) {
+        if (req.cookies.token === undefined && req.headers.authorization === undefined) {
             res.redirect('/login')
         } else {
+            let token
+            let isAPIAccess = false
+            if (req.cookies.token !== undefined) {
+                token = req.cookies.token
+            } else {
+                token = req.headers.authorization.split(' ')[1]
+                isAPIAccess = true
+            }
             jsonwebtoken.verify(token, process.env.TOKEN_SECRET, {},(error, decoded) => {
                 if (error) {
                     res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
@@ -82,7 +89,7 @@ db.initialize(database.url_atlas).then(() => {
                         if (user == null) {
                             res.redirect('/login')
                         } else {
-                            if (user.token === token) {
+                            if (user.token === token || isAPIAccess) {
                                 next()
                             } else {
                                 res.redirect('/login')
