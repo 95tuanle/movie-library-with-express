@@ -5,7 +5,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "@apollo/server": "^4.7.5",
+    "@apollo/server": "^4.8.0",
     "@handlebars/allow-prototype-access": "^1.0.5",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
@@ -13,11 +13,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "express-handlebars": "^7.0.7",
+    "express-handlebars": "^7.1.0",
     "express-validator": "^7.0.1",
     "handlebars": "^4.7.7",
     "jsonwebtoken": "^9.0.1",
     "method-override": "^3.0.0",
-    "mongoose": "^7.3.4"
+    "mongoose": "^7.4.0"
   }
 }
