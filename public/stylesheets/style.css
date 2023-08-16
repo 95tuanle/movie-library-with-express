@@ -2,7 +2,7 @@ table, tr, th, td {
     border: solid black;
     collapse: true;
     border-collapse: collapse;
-    table-layout:fixed;
+    table-layout: fixed;
     overflow: hidden;
     text-overflow: ellipsis;
     word-wrap: break-word;

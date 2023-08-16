@@ -1,5 +1,5 @@
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import {ApolloServer} from '@apollo/server';
+import {startStandaloneServer} from '@apollo/server/standalone';
 import db from './db.js';
 import database from "./config/database.js";
 

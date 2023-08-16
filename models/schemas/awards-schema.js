@@ -12,8 +12,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 AwardsSchema = new Schema({
-    wins : { type: Number } ,
-    nominations : { type: Number } ,
-    text : { type: String }
+    wins: {type: Number},
+    nominations: {type: Number},
+    text: {type: String}
 })
 module.exports = AwardsSchema

@@ -12,8 +12,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 ImdbSchema = new Schema({
-    rating : { type: Number } ,
-    votes : { type: Number } ,
-    id : { type: Number }
+    rating: {type: Number},
+    votes: {type: Number},
+    id: {type: Number}
 })
 module.exports = ImdbSchema

@@ -25,7 +25,7 @@ const cookieParser = require('cookie-parser')
 // set constant for port
 const port = process.env.PORT || 8000
 // import express-validator
-const { body, query, param, validationResult } = require('express-validator')
+const {body, query, param, validationResult} = require('express-validator')
 // import method-override
 const methodOverride = require('method-override')
 // import database config
@@ -60,7 +60,7 @@ app.use(express.urlencoded({extended: true}))
 // parse application/json
 app.use(express.json())
 // parse application/vnd.api+json as json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }))
+app.use(bodyParser.json({type: 'application/vnd.api+json'}))
 // allow app to override methods
 app.use(methodOverride('_method'))
 // register the given template engine callback as ext
@@ -79,9 +79,12 @@ db.initialize(database.url_atlas).then(() => {
             } else {
                 token = req.headers.authorization.split(' ')[1]
             }
-            jsonwebtoken.verify(token, process.env.TOKEN_SECRET, {},(error, decoded) => {
+            jsonwebtoken.verify(token, process.env.TOKEN_SECRET, {}, (error, decoded) => {
                 if (error) {
-                    res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
                 } else {
                     db.findUser(decoded.user.username).then(user => {
                         if (user == null) {
@@ -94,7 +97,10 @@ db.initialize(database.url_atlas).then(() => {
                             }
                         }
                     }, error => {
-                        res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                        res.status(500).render('error', {
+                            title: 'Error',
+                            message: `Error: 500: Internal Server Error ${error}`
+                        })
                     })
                 }
             })
@@ -132,17 +138,27 @@ db.initialize(database.url_atlas).then(() => {
         }),
         body('password').trim().escape().notEmpty().withMessage('Password must not be empty').bail().customSanitizer(encryptPassword),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.render('user_form', {title: 'Register', method: 'post', action: '/register', errors: errors['errors'], body: req.body, isRegister: true})
-        } else {
-            db.addNewUser(req.body).then(() => {
-                res.redirect('/login')
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.render('user_form', {
+                    title: 'Register',
+                    method: 'post',
+                    action: '/register',
+                    errors: errors['errors'],
+                    body: req.body,
+                    isRegister: true
+                })
+            } else {
+                db.addNewUser(req.body).then(() => {
+                    res.redirect('/login')
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.get('/login', (req, res) => {
         res.clearCookie("token")
@@ -153,60 +169,90 @@ db.initialize(database.url_atlas).then(() => {
         body('username').trim().escape().notEmpty().withMessage('Username must not be empty').bail().toLowerCase(),
         body('password').trim().escape().notEmpty().withMessage('Password must not be empty'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: errors['errors'], isLogin: true})
-        } else {
-            db.findUser(req.body['username']).then(user => {
-                if (user == null) {
-                    res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
-                        location: 'body',
-                        msg: 'Unable to login with that username',
-                        param: 'username',
-                        value: req.body['username']
-                    }], isLogin: true})
-                } else {
-                    bcryptjs.compare(req.body['password'], user.password).then(result => {
-                        if (result) {
-                            user.token = ''
-                            jsonwebtoken.sign({user}, process.env.TOKEN_SECRET, {},(error, token) => {
-                                if (error) {
-                                    res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-                                } else {
-                                    db.updateUserToken(user.username, token).then(updatedUser => {
-                                        if (updatedUser == null) {
-                                            res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
-                                                    location: 'body',
-                                                    msg: 'Unable to login with that username',
-                                                    param: 'username',
-                                                    value: req.body['username']
-                                                }], isLogin: true})
-                                        } else {
-                                            res.cookie('token', updatedUser['token'])
-                                            res.redirect('/')
-                                        }
-                                    }, error => {
-                                        res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-                                    })
-                                }
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.render('user_form', {
+                    title: 'Login',
+                    method: 'post',
+                    action: '/login',
+                    body: req.body,
+                    errors: errors['errors'],
+                    isLogin: true
+                })
+            } else {
+                db.findUser(req.body['username']).then(user => {
+                    if (user == null) {
+                        res.render('user_form', {
+                            title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
+                                location: 'body',
+                                msg: 'Unable to login with that username',
+                                param: 'username',
+                                value: req.body['username']
+                            }], isLogin: true
+                        })
+                    } else {
+                        bcryptjs.compare(req.body['password'], user.password).then(result => {
+                            if (result) {
+                                user.token = ''
+                                jsonwebtoken.sign({user}, process.env.TOKEN_SECRET, {}, (error, token) => {
+                                    if (error) {
+                                        res.status(500).render('error', {
+                                            title: 'Error',
+                                            message: `Error: 500: Internal Server Error ${error}`
+                                        })
+                                    } else {
+                                        db.updateUserToken(user.username, token).then(updatedUser => {
+                                            if (updatedUser == null) {
+                                                res.render('user_form', {
+                                                    title: 'Login',
+                                                    method: 'post',
+                                                    action: '/login',
+                                                    body: req.body,
+                                                    errors: [{
+                                                        location: 'body',
+                                                        msg: 'Unable to login with that username',
+                                                        param: 'username',
+                                                        value: req.body['username']
+                                                    }],
+                                                    isLogin: true
+                                                })
+                                            } else {
+                                                res.cookie('token', updatedUser['token'])
+                                                res.redirect('/')
+                                            }
+                                        }, error => {
+                                            res.status(500).render('error', {
+                                                title: 'Error',
+                                                message: `Error: 500: Internal Server Error ${error}`
+                                            })
+                                        })
+                                    }
+                                })
+                            } else {
+                                res.render('user_form', {
+                                    title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
+                                        value: req.body['password'],
+                                        msg: 'Wrong password',
+                                        param: 'password',
+                                        location: 'body'
+                                    }], isLogin: true
+                                })
+                            }
+                        }, error => {
+                            res.status(500).render('error', {
+                                title: 'Error',
+                                message: `Error: 500: Internal Server Error ${error}`
                             })
-                        } else {
-                            res.render('user_form', {title: 'Login', method: 'post', action: '/login', body: req.body, errors: [{
-                                value: req.body['password'],
-                                msg: 'Wrong password',
-                                param: 'password',
-                                location: 'body'
-                            }], isLogin: true})
-                        }
-                    }, error => {
-                        res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
+                        })
+                    }
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
                     })
-                }
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+                })
+            }
+        })
 
     const toArray = elementString => elementString.split(',').map(element => {
         return element.trim()
@@ -236,17 +282,32 @@ db.initialize(database.url_atlas).then(() => {
         body('writers').trim().escape().optional({checkFalsy: true}).customSanitizer(toArray),
         body('year').trim().escape().isInt({min: 0}).withMessage('Year must be a positive integer'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.render('movie_submit_form', {title: 'Add Movie', method: 'post', action: '/api/Movies', errors: errors['errors'], body: req.body})
-        } else {
-            db.addNewMovie(req.body).then(createdMovie => {
-                res.render('movie_submit_form', {title: 'Added Movie', method: 'post', action: `/api/Movies/${createdMovie['_id']}?_method=PUT`, body: createdMovie, _id: createdMovie['_id']})
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.render('movie_submit_form', {
+                    title: 'Add Movie',
+                    method: 'post',
+                    action: '/api/Movies',
+                    errors: errors['errors'],
+                    body: req.body
+                })
+            } else {
+                db.addNewMovie(req.body).then(createdMovie => {
+                    res.render('movie_submit_form', {
+                        title: 'Added Movie',
+                        method: 'post',
+                        action: `/api/Movies/${createdMovie['_id']}?_method=PUT`,
+                        body: createdMovie,
+                        _id: createdMovie['_id']
+                    })
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.get('/Movies/get', (req, res) => {
         res.render('movies_get_form', {title: 'Get Movies'})
@@ -257,51 +318,69 @@ db.initialize(database.url_atlas).then(() => {
         query('perPage').trim().escape().default(0).isInt({min: 0}).withMessage('Per page must be a positive integer'),
         query('title').trim().escape(),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.render('movies_get_form', {title: 'Get Movies', errors: errors['errors'], query: req.query})
-        } else {
-            db.getAllMovies(req.query['page'], req.query['perPage'], req.query['title']).then(result => {
-                res.render('movies', {title: 'Movies', movies: result})
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.render('movies_get_form', {title: 'Get Movies', errors: errors['errors'], query: req.query})
+            } else {
+                db.getAllMovies(req.query['page'], req.query['perPage'], req.query['title']).then(result => {
+                    res.render('movies', {title: 'Movies', movies: result})
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.get('/api/Movies/:_id',
         param('_id').trim().escape().notEmpty().withMessage('_id must not be empty'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.json(errors)
-        } else {
-            db.getMovieById(req.params['_id']).then(result => {
-                res.json(result)
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.json(errors)
+            } else {
+                db.getMovieById(req.params['_id']).then(result => {
+                    res.json(result)
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.get('/Movies/update/:_id',
         param('_id').trim().escape().notEmpty().withMessage('_id must not be empty'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.json(errors)
-        } else {
-            db.getMovieById(req.params['_id']).then(result => {
-                if (result === null) {
-                    res.render('error', {title: 'Error', message: `Unable to find the movie with id ${req.params['_id']}`})
-                } else {
-                    res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${result['_id']}?_method=PUT`, body: result, _id: result['_id']})
-                }
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.json(errors)
+            } else {
+                db.getMovieById(req.params['_id']).then(result => {
+                    if (result === null) {
+                        res.render('error', {
+                            title: 'Error',
+                            message: `Unable to find the movie with id ${req.params['_id']}`
+                        })
+                    } else {
+                        res.render('movie_submit_form', {
+                            title: 'Update Movie',
+                            method: 'post',
+                            action: `/api/Movies/${result['_id']}?_method=PUT`,
+                            body: result,
+                            _id: result['_id']
+                        })
+                    }
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.put('/api/Movies/:_id',
         param('_id').trim().escape().notEmpty().withMessage('_id must not be empty'),
@@ -324,69 +403,100 @@ db.initialize(database.url_atlas).then(() => {
         body('writers').trim().escape().optional({checkFalsy: true}).customSanitizer(toArray),
         body('year').trim().escape().isInt({min: 0}).withMessage('Year must be a positive integer'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            let isEmpty_id = false
-            for (const error of errors['errors']) {
-                if (error['param'] === '_id') {
-                    isEmpty_id = true
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                let isEmpty_id = false
+                for (const error of errors['errors']) {
+                    if (error['param'] === '_id') {
+                        isEmpty_id = true
+                    }
                 }
-            }
-           if (isEmpty_id) {
-               res.json(errors)
-           } else {
-               res.render('movie_submit_form', {title: 'Update Movie', method: 'post', action: `/api/Movies/${req.params['_id']}?_method=PUT`, body: req.body, errors: errors['errors'], _id: req.params['_id']})
-           }
-        } else {
-            db.updateMovieById(req.body, req.params['_id']).then(updatedMovie => {
-                if (updatedMovie === null) {
-                    res.render('error', {title: 'Error', message: `Unable to update the movie with id ${req.params['_id']}`})
+                if (isEmpty_id) {
+                    res.json(errors)
                 } else {
-                    res.render('movie_submit_form', {title: 'Updated Movie', method: 'post', action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`, body: updatedMovie, _id: updatedMovie['_id']})
+                    res.render('movie_submit_form', {
+                        title: 'Update Movie',
+                        method: 'post',
+                        action: `/api/Movies/${req.params['_id']}?_method=PUT`,
+                        body: req.body,
+                        errors: errors['errors'],
+                        _id: req.params['_id']
+                    })
                 }
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            } else {
+                db.updateMovieById(req.body, req.params['_id']).then(updatedMovie => {
+                    if (updatedMovie === null) {
+                        res.render('error', {
+                            title: 'Error',
+                            message: `Unable to update the movie with id ${req.params['_id']}`
+                        })
+                    } else {
+                        res.render('movie_submit_form', {
+                            title: 'Updated Movie',
+                            method: 'post',
+                            action: `/api/Movies/${updatedMovie['_id']}?_method=PUT`,
+                            body: updatedMovie,
+                            _id: updatedMovie['_id']
+                        })
+                    }
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.delete('/api/Movies/:_id',
         param('_id').trim().escape().notEmpty().withMessage('_id must not be empty'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.json(errors)
-        } else {
-            db.deleteMovieById(req.params['_id']).then(result => {
-                if (result === null) {
-                    res.render('error', {title: 'Error', message: `Unable to delete the movie with id ${req.params['_id']}`})
-                } else {
-                    res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
-                }
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.json(errors)
+            } else {
+                db.deleteMovieById(req.params['_id']).then(result => {
+                    if (result === null) {
+                        res.render('error', {
+                            title: 'Error',
+                            message: `Unable to delete the movie with id ${req.params['_id']}`
+                        })
+                    } else {
+                        res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
+                    }
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.delete('/api/Movies',
         body('_id').trim().escape().notEmpty().withMessage('_id must not be empty'),
         (req, res) => {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            res.json(errors)
-        } else {
-            db.deleteMovieById(req.body['_id']).then(result => {
-                if (result === null) {
-                    res.render('error', {title: 'Error', message: `Unable to delete the movie with id ${req.body['_id']}`})
-                } else {
-                    res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
-                }
-            }, error => {
-                res.status(500).render('error', {title: 'Error', message: `Error: 500: Internal Server Error ${error}`})
-            })
-        }
-    })
+            const errors = validationResult(req)
+            if (!errors.isEmpty()) {
+                res.json(errors)
+            } else {
+                db.deleteMovieById(req.body['_id']).then(result => {
+                    if (result === null) {
+                        res.render('error', {
+                            title: 'Error',
+                            message: `Unable to delete the movie with id ${req.body['_id']}`
+                        })
+                    } else {
+                        res.render('index', {title: `Deleted the movie with id ${result['_id']}`})
+                    }
+                }, error => {
+                    res.status(500).render('error', {
+                        title: 'Error',
+                        message: `Error: 500: Internal Server Error ${error}`
+                    })
+                })
+            }
+        })
 
     app.all('*', (req, res) => {
         res.status(404).render('error', {title: 'Error', message: 'Error: 404: page not found'})

@@ -12,8 +12,8 @@
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 ViewerSchema = new Schema({
-    rating : { type: Number } ,
-    numReviews : { type: Number } ,
-    meter : { type: Number }
+    rating: {type: Number},
+    numReviews: {type: Number},
+    meter: {type: Number}
 })
 module.exports = ViewerSchema
