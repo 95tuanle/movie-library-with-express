@@ -18,6 +18,6 @@
     "handlebars": "^4.7.9",
     "jsonwebtoken": "^9.0.2",
     "method-override": "^3.0.0",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.24.1"
   }
 }
